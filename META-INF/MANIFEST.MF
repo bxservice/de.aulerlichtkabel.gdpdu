@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GDPdU-Export
+Bundle-SymbolicName: de.aulerlichtkabel.gdpdu;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.adempiere.base;bundle-version="2.1.0",
+ org.adempiere.plugin.utils;bundle-version="2.1.0"
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/*.xml
+Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
+Bundle-Vendor: Patric Maßing (Hans Auler GmbH)
+Export-Package: de.aulerlichtkabel.gdpdu.component,
+ de.aulerlichtkabel.gdpdu.model,
+ de.aulerlichtkabel.gdpdu.process,
+ de.aulerlichtkabel.gdpdu.xml.model
