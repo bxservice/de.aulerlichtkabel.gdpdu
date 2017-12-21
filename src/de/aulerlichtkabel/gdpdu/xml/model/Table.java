@@ -385,19 +385,125 @@ public class Table {
 
 						int col = 1;
 
-						for (int pos = 0; pos <= getVariableLength()
+						for (int pos = 0; pos < getVariableLength()
 								.getVariableColumnList().size(); pos++) {
 							
-							
+							MColumn column = new Query(Env.getCtx(),
+									MColumn.Table_Name, "ad_column_id=?", null)
+									.setParameters(
+											ColumnIDList.getColumn_idlist().get(pos))
+									.first();
+														
 							StringBuilder value = new StringBuilder();
 
 							if (rs.getObject(col) == null) {
-								value.append("null");
+								
+								if ((column.getAD_Reference().getName()
+										.equals("ID"))
+										|| (column.getAD_Reference().getName()
+												.equals("Table Direct"))
+										|| (column.getAD_Reference().getName()
+												.equals("Table"))) {								
+								value.append("0");
+								
+								} else if ((column.getAD_Reference().getName()
+										.equals("String"))
+										|| (column.getAD_Reference().getName()
+												.equals("Text"))
+										|| (column.getAD_Reference().getName()
+												.equals("Text Long"))
+										|| (column.getAD_Reference().getName()
+												.equals("Button"))) {
 
+									if (getVariableLength()
+											.getTextEncapsulator() != null) {
+										value.append(getVariableLength()
+												.getTextEncapsulator());
+									} else {
+										value.append(DEFAUL_TEXT_ENCAPSULATOR);
+									}
+
+									value.append(" ");
+
+									if (getVariableLength()
+											.getTextEncapsulator() != null) {
+										value.append(getVariableLength()
+												.getTextEncapsulator());
+									} else {
+										value.append(DEFAUL_TEXT_ENCAPSULATOR);
+									}
+
+								} else if ((column.getAD_Reference().getName()
+										.equals("Numeric"))
+										|| (column.getAD_Reference().getName()
+												.equals("Quantity"))
+										|| (column.getAD_Reference().getName()
+												.equals("Amount"))
+										|| (column.getAD_Reference().getName()
+												.equals("Integer"))) {
+
+									// TODO: Numberformat
+									StringBuilder no = new StringBuilder();
+									no.append(numberFormat.format(Env.ZERO));
+
+									// DecimalSymbol
+									if ((getDecimalSymbol() != null)
+											&& !(no.toString()
+													.contains(getDecimalSymbol()))) {
+										no.toString().replaceAll(
+												DEFAULT_DECIMAL_SYMBOL,
+												getDecimalSymbol());
+									} else {
+										StringBuilder dcs = new StringBuilder();
+										dcs.append(numberFormat
+												.getDecimalFormatSymbols()
+												.getDecimalSeparator());
+										no.toString().replaceAll(
+												dcs.toString(),
+												DEFAULT_DECIMAL_SYMBOL);
+									}
+
+									// DigitGroupingSymbol
+									if ((getDigitGroupingSymbol() != null)
+											&& !(no.toString()
+													.contains(getDigitGroupingSymbol()))) {
+										no.toString().replaceAll(
+												DEFAULT_DIGIT_GROUPING_SYMBOL,
+												getDecimalSymbol());
+									} else {
+										StringBuilder grs = new StringBuilder();
+										grs.append(numberFormat
+												.getDecimalFormatSymbols()
+												.getGroupingSeparator());
+
+										no.toString().replaceAll(
+												grs.toString(),
+												DEFAULT_DIGIT_GROUPING_SYMBOL);
+									}
+
+									value.append(no);
+
+								} else if ((column.getAD_Reference().getName()
+										.equals("Date"))
+										|| (column.getAD_Reference().getName()
+												.equals("Date+Time"))) {
+
+									DateFormat df = new SimpleDateFormat(
+											"dd.MM.YYYY");
+									value.append("00.00.0000");
+
+								} else {
+
+									value.append(" ");
+
+								}
+								
+								
+								
 								csvoutput.write(value.toString());
 
-								if (pos < getVariableLength()
-										.getVariableColumnList().size()) {
+								if (pos < (getVariableLength()
+										.getVariableColumnList().size()-1)) {
 									if (getVariableLength()
 											.getColumnDelimiter() != null) {
 										csvoutput.write(getVariableLength()
@@ -412,14 +518,6 @@ public class Table {
 								continue;
 							}
 
-
-
-							MColumn column = new Query(Env.getCtx(),
-									MColumn.Table_Name, "ad_column_id=?", null)
-									.setParameters(
-											ColumnIDList.getColumn_idlist().get(pos))
-									.first();
-							
 
 							if (column != null) {
 
@@ -462,8 +560,8 @@ public class Table {
 
 										csvoutput.write(value.toString());
 
-										if (pos < getVariableLength()
-												.getVariableColumnList().size()) {
+										if (pos < (getVariableLength()
+												.getVariableColumnList().size()-1)) {
 											if (getVariableLength()
 													.getColumnDelimiter() != null) {
 												csvoutput
@@ -587,8 +685,8 @@ public class Table {
 
 							csvoutput.write(value.toString());
 
-							if (pos < getVariableLength()
-									.getVariableColumnList().size()) {
+							if (pos < (getVariableLength()
+									.getVariableColumnList().size()-1)) {
 								if (getVariableLength().getColumnDelimiter() != null) {
 									csvoutput.write(getVariableLength()
 											.getColumnDelimiter());
