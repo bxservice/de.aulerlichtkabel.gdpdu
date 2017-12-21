@@ -385,7 +385,7 @@ public class Table {
 
 						int col = 1;
 
-						for (int pos = 0; pos < getVariableLength()
+						for (int pos = 0; pos <= getVariableLength()
 								.getVariableColumnList().size(); pos++) {
 							
 							MColumn column = new Query(Env.getCtx(),
@@ -503,7 +503,7 @@ public class Table {
 								csvoutput.write(value.toString());
 
 								if (pos < (getVariableLength()
-										.getVariableColumnList().size()-1)) {
+										.getVariableColumnList().size())) {
 									if (getVariableLength()
 											.getColumnDelimiter() != null) {
 										csvoutput.write(getVariableLength()
@@ -528,57 +528,6 @@ public class Table {
 										|| (column.getAD_Reference().getName()
 												.equals("Table"))) {
 
-									// special fact_acct
-									// **
-
-									if (tableName.equals("Accounting Fact")
-											&&
-
-											(column.getColumnName()
-													.equals(MFactAcct.COLUMNNAME_AD_Table_ID))) {
-
-										// System.out.println("true");
-										// System.out.println(rs.getObject(col));
-
-										MTable tbl = new Query(Env.getCtx(),
-												MTable.Table_Name,
-												"ad_table_id=?", null)
-												.setParameters(
-														rs.getObject(col))
-												.first();
-
-										if (tbl != null) {
-
-											if (tbl.get_Translation(MTable.COLUMNNAME_Name) != null) {
-												value.append(tbl
-														.get_Translation(MTable.COLUMNNAME_Name));
-											} else {
-												value.append(tbl
-														.get_TableName());
-											}
-										}
-
-										csvoutput.write(value.toString());
-
-										if (pos < (getVariableLength()
-												.getVariableColumnList().size()-1)) {
-											if (getVariableLength()
-													.getColumnDelimiter() != null) {
-												csvoutput
-														.write(getVariableLength()
-																.getColumnDelimiter());
-											} else {
-												csvoutput
-														.write(DEFAULT_COLUMN_DELIMITER);
-											}
-										}
-										
-										col++;
-										continue;
-
-									}
-
-									// **
 									value.append(rs.getObject(col).toString());
 
 								} else if ((column.getAD_Reference().getName()
@@ -600,12 +549,6 @@ public class Table {
 
 									value.append(clearText(rs.getObject(col)
 											.toString()));
-
-									// if (rs.getObject(col) != null){
-									// value.append(clearText(rs.getObject(col).toString()));
-									// } else{
-									// value.append("null");
-									// }
 
 									if (getVariableLength()
 											.getTextEncapsulator() != null) {
@@ -686,7 +629,7 @@ public class Table {
 							csvoutput.write(value.toString());
 
 							if (pos < (getVariableLength()
-									.getVariableColumnList().size()-1)) {
+									.getVariableColumnList().size())) {
 								if (getVariableLength().getColumnDelimiter() != null) {
 									csvoutput.write(getVariableLength()
 											.getColumnDelimiter());
