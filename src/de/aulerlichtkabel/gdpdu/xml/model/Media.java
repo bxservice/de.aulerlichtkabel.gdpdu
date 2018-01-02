@@ -26,7 +26,6 @@ package de.aulerlichtkabel.gdpdu.xml.model;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipException;

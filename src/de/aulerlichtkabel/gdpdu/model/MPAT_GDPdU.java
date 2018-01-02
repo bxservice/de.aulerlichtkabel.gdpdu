@@ -53,7 +53,7 @@ public class MPAT_GDPdU extends X_PAT_GDPdU {
 	{
 						
 		List<MPAT_GDPdU_Export_Def> list = new Query(getCtx(), MPAT_GDPdU_Export_Def.Table_Name,
-				"AD_Client_ID is not null and isactive='Y' and pat_gdpdu_id = ? ", get_TrxName()).setParameters(pat_gdpdu_id).list();
+				"AD_Client_ID is not null and isactive='Y' and pat_gdpdu_id = ?", get_TrxName()).setParameters(pat_gdpdu_id).setOrderBy("created").list();
 			
 		return list.toArray(new MPAT_GDPdU_Export_Def[list.size()]);
 	}	

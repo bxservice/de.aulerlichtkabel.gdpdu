@@ -24,7 +24,7 @@
 
 package de.aulerlichtkabel.gdpdu.xml.model;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -35,12 +35,12 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.compiere.model.MColumn;
-import org.compiere.model.MFactAcct;
 import org.compiere.model.MTable;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
@@ -65,8 +65,6 @@ public class Table {
 	private FixedLength fixedLength = null;
 	private Integer length = null;
 //	private String range = null;
-
-	private StringBuilder sql = new StringBuilder();
 
 	// Defaults
 	final private String DEFAULT_COLUMN_DELIMITER = ";";
@@ -281,378 +279,55 @@ public class Table {
 			this.length = length;
 	}
 
-	public void writeCSVFile(boolean isFixedLength, String tableName, String tableNameTranslation, boolean isUseclientid, int client_Id, int org_Id, String p_PathDictionary) {
-		
-//		System.out.println(getValidity().getRange().getTo());
+	public void writeCSVFile(boolean isFixedLength, String tableName,
+			String tableNameTranslation, boolean isUseclientid, int client_Id,
+			int org_Id, String p_PathDictionary) {
 
 		if (!isFixedLength) {
 			
-			try (Writer csvoutput = new FileWriter(p_PathDictionary + tableNameTranslation + ".csv")) {
-				
-				MTable table = new Query(Env.getCtx(), MTable.Table_Name,
-						"name=?", null).setParameters(tableName).first();
+			Writer csvoutput = null;
+			BufferedWriter bufferedCsvoutput = null;
+			
 
-				if (table != null) {
+				try {
+					csvoutput = new FileWriter(p_PathDictionary
+							+ tableNameTranslation + ".csv");
+				} catch (IOException e1) {
 
-					ArrayList<String> columnlist = new ArrayList<String>();							
-
-					sql.append("SELECT ");
-
-					for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
-
-						MColumn column = new Query(Env.getCtx(),
-								MColumn.Table_Name, "ad_column_id=?", null)
-								.setParameters(vc_id).first();
-
-						if (column != null){
-							sql.append(column.getColumnName()).append(",");
-							columnlist.add(column.getColumnName());
-						}
-						
-						// TODO: insert Ademmpiere Exception
-
-					}
-
-					// remove last ,
-					sql.setLength(sql.length() - 1);
-
-					sql.append(" from ");
-					sql.append(table.getTableName());
-
-					sql.append(" where ");
-
-					if (columnlist.contains("DateAcct")) {
-
-						sql.append("dateacct between '")
-								.append(getValidity().getRange().getFrom())
-								.append("'");
-						sql.append(" and ");
-						sql.append("'")
-								.append(getValidity().getRange().getTo())
-								.append("'");
-
-					} else if (columnlist.contains("DateOrdered")) {
-
-						sql.append("dateordered between '")
-								.append(getValidity().getRange().getFrom())
-								.append("'");
-						sql.append(" and ");
-						sql.append("'")
-								.append(getValidity().getRange().getTo())
-								.append("'");
-
-					} else {
-
-						sql.append("created between '")
-								.append(getValidity().getRange().getFrom())
-								.append("'");
-						sql.append(" and ");
-						sql.append("'")
-								.append(getValidity().getRange().getTo())
-								.append("'");
-
-					}
-					
-					if (isUseclientid) {
-						sql.append(" and ");
-						sql.append("ad_client_id=");
-						sql.append(client_Id);
-					}
-					
-					if (org_Id != 0) {
-						sql.append(" and ");
-						sql.append("ad_org_id=");
-						sql.append(org_Id);
-					}
-					
-					if (columnlist.contains("Posted")) {
-						sql.append(" and ");
-						sql.append("posted='Y'");
-					}
-
+					e1.printStackTrace();
 				}
+				bufferedCsvoutput = new BufferedWriter(
+						csvoutput);
 				
-				//System.out.println(sql);
-				
+				List<String> rfl = getRefList();
+
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
+
 				try {
 
-					pstmt = DB.prepareStatement(sql.toString(), null);
+					pstmt = DB.prepareStatement(
+							sqlStatement(tableName, isUseclientid, client_Id,
+									org_Id), null);
 					rs = pstmt.executeQuery();
 
-					while (rs.next()) {
+						
+					while (rs.next())
+						try {
+							bufferedCsvoutput.write(buildRecord(rs, rfl));
+						} catch (IOException e) {
 
-						int col = 1;
-
-						for (int pos = 0; pos <= getVariableLength()
-								.getVariableColumnList().size(); pos++) {
-							
-							MColumn column = new Query(Env.getCtx(),
-									MColumn.Table_Name, "ad_column_id=?", null)
-									.setParameters(
-											ColumnIDList.getColumn_idlist().get(pos))
-									.first();
-														
-							StringBuilder value = new StringBuilder();
-
-							if (rs.getObject(col) == null) {
-								
-								if ((column.getAD_Reference().getName()
-										.equals("ID"))
-										|| (column.getAD_Reference().getName()
-												.equals("Table Direct"))
-										|| (column.getAD_Reference().getName()
-												.equals("Table"))) {								
-								value.append("0");
-								
-								} else if ((column.getAD_Reference().getName()
-										.equals("String"))
-										|| (column.getAD_Reference().getName()
-												.equals("Text"))
-										|| (column.getAD_Reference().getName()
-												.equals("Text Long"))
-										|| (column.getAD_Reference().getName()
-												.equals("Button"))) {
-
-									if (getVariableLength()
-											.getTextEncapsulator() != null) {
-										value.append(getVariableLength()
-												.getTextEncapsulator());
-									} else {
-										value.append(DEFAUL_TEXT_ENCAPSULATOR);
-									}
-
-									value.append(" ");
-
-									if (getVariableLength()
-											.getTextEncapsulator() != null) {
-										value.append(getVariableLength()
-												.getTextEncapsulator());
-									} else {
-										value.append(DEFAUL_TEXT_ENCAPSULATOR);
-									}
-
-								} else if ((column.getAD_Reference().getName()
-										.equals("Numeric"))
-										|| (column.getAD_Reference().getName()
-												.equals("Quantity"))
-										|| (column.getAD_Reference().getName()
-												.equals("Amount"))
-										|| (column.getAD_Reference().getName()
-												.equals("Integer"))) {
-
-									// TODO: Numberformat
-									StringBuilder no = new StringBuilder();
-									no.append(numberFormat.format(Env.ZERO));
-
-									// DecimalSymbol
-									if ((getDecimalSymbol() != null)
-											&& !(no.toString()
-													.contains(getDecimalSymbol()))) {
-										no.toString().replaceAll(
-												DEFAULT_DECIMAL_SYMBOL,
-												getDecimalSymbol());
-									} else {
-										StringBuilder dcs = new StringBuilder();
-										dcs.append(numberFormat
-												.getDecimalFormatSymbols()
-												.getDecimalSeparator());
-										no.toString().replaceAll(
-												dcs.toString(),
-												DEFAULT_DECIMAL_SYMBOL);
-									}
-
-									// DigitGroupingSymbol
-									if ((getDigitGroupingSymbol() != null)
-											&& !(no.toString()
-													.contains(getDigitGroupingSymbol()))) {
-										no.toString().replaceAll(
-												DEFAULT_DIGIT_GROUPING_SYMBOL,
-												getDecimalSymbol());
-									} else {
-										StringBuilder grs = new StringBuilder();
-										grs.append(numberFormat
-												.getDecimalFormatSymbols()
-												.getGroupingSeparator());
-
-										no.toString().replaceAll(
-												grs.toString(),
-												DEFAULT_DIGIT_GROUPING_SYMBOL);
-									}
-
-									value.append(no);
-
-								} else if ((column.getAD_Reference().getName()
-										.equals("Date"))
-										|| (column.getAD_Reference().getName()
-												.equals("Date+Time"))) {
-
-									DateFormat df = new SimpleDateFormat(
-											"dd.MM.YYYY");
-									value.append("00.00.0000");
-
-								} else {
-
-									value.append(" ");
-
-								}
-								
-								
-								
-								csvoutput.write(value.toString());
-
-								if (pos < (getVariableLength()
-										.getVariableColumnList().size())) {
-									if (getVariableLength()
-											.getColumnDelimiter() != null) {
-										csvoutput.write(getVariableLength()
-												.getColumnDelimiter());
-									} else {
-										csvoutput
-												.write(DEFAULT_COLUMN_DELIMITER);
-									}
-								}
-								
-								col++;
-								continue;
-							}
-
-
-							if (column != null) {
-
-								if ((column.getAD_Reference().getName()
-										.equals("ID"))
-										|| (column.getAD_Reference().getName()
-												.equals("Table Direct"))
-										|| (column.getAD_Reference().getName()
-												.equals("Table"))) {
-
-									value.append(rs.getObject(col).toString());
-
-								} else if ((column.getAD_Reference().getName()
-										.equals("String"))
-										|| (column.getAD_Reference().getName()
-												.equals("Text"))
-										|| (column.getAD_Reference().getName()
-												.equals("Text Long"))
-										|| (column.getAD_Reference().getName()
-												.equals("Button"))) {
-
-									if (getVariableLength()
-											.getTextEncapsulator() != null) {
-										value.append(getVariableLength()
-												.getTextEncapsulator());
-									} else {
-										value.append(DEFAUL_TEXT_ENCAPSULATOR);
-									}
-
-									value.append(clearText(rs.getObject(col)
-											.toString()));
-
-									if (getVariableLength()
-											.getTextEncapsulator() != null) {
-										value.append(getVariableLength()
-												.getTextEncapsulator());
-									} else {
-										value.append(DEFAUL_TEXT_ENCAPSULATOR);
-									}
-
-								} else if ((column.getAD_Reference().getName()
-										.equals("Numeric"))
-										|| (column.getAD_Reference().getName()
-												.equals("Quantity"))
-										|| (column.getAD_Reference().getName()
-												.equals("Amount"))
-										|| (column.getAD_Reference().getName()
-												.equals("Integer"))) {
-
-									// TODO: Numberformat
-									StringBuilder no = new StringBuilder();
-									no.append(numberFormat.format(rs
-											.getObject(col)));
-
-									// DecimalSymbol
-									if ((getDecimalSymbol() != null)
-											&& !(no.toString()
-													.contains(getDecimalSymbol()))) {
-										no.toString().replaceAll(
-												DEFAULT_DECIMAL_SYMBOL,
-												getDecimalSymbol());
-									} else {
-										StringBuilder dcs = new StringBuilder();
-										dcs.append(numberFormat
-												.getDecimalFormatSymbols()
-												.getDecimalSeparator());
-										no.toString().replaceAll(
-												dcs.toString(),
-												DEFAULT_DECIMAL_SYMBOL);
-									}
-
-									// DigitGroupingSymbol
-									if ((getDigitGroupingSymbol() != null)
-											&& !(no.toString()
-													.contains(getDigitGroupingSymbol()))) {
-										no.toString().replaceAll(
-												DEFAULT_DIGIT_GROUPING_SYMBOL,
-												getDecimalSymbol());
-									} else {
-										StringBuilder grs = new StringBuilder();
-										grs.append(numberFormat
-												.getDecimalFormatSymbols()
-												.getGroupingSeparator());
-
-										no.toString().replaceAll(
-												grs.toString(),
-												DEFAULT_DIGIT_GROUPING_SYMBOL);
-									}
-
-									value.append(no);
-
-								} else if ((column.getAD_Reference().getName()
-										.equals("Date"))
-										|| (column.getAD_Reference().getName()
-												.equals("Date+Time"))) {
-
-									DateFormat df = new SimpleDateFormat(
-											"dd.MM.YYYY");
-									value.append(df.format(rs.getObject(col)));
-
-								} else {
-
-									value.append(rs.getObject(col).toString());
-
-								}
-
-							}
-
-							csvoutput.write(value.toString());
-
-							if (pos < (getVariableLength()
-									.getVariableColumnList().size())) {
-								if (getVariableLength().getColumnDelimiter() != null) {
-									csvoutput.write(getVariableLength()
-											.getColumnDelimiter());
-								} else {
-									csvoutput.write(DEFAULT_COLUMN_DELIMITER);
-								}
-							}
-
-							col++;
-
+							e.printStackTrace();
 						}
+					
+					
+					try {
+						csvoutput.close();
+					} catch (IOException e) {
 
-						if (getVariableLength().getRecordDelimiter() != null)
-							csvoutput.write(getVariableLength()
-									.getRecordDelimiter());
-						else
-							csvoutput.write(DEFAULT_RECORD_DELIMITER);
-
+						e.printStackTrace();
 					}
 
-					csvoutput.close();
-
-					ColumnIDList.clear();
 
 				} catch (SQLException e) {
 					// log.log(Level.SEVERE, sql, e);
@@ -662,18 +337,272 @@ public class Table {
 					pstmt = null;
 				}
 
-			} catch (FileNotFoundException e) {
-
-				e.printStackTrace();
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
+			
+			ColumnIDList.clear();
+		
 		}
+
+	}	
+
+	private List<MColumn> getColumnList() {
+
+		List<MColumn> cl = new ArrayList<MColumn>();
+
+		for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
+
+			MColumn column = new Query(Env.getCtx(), MColumn.Table_Name,
+					"ad_column_id=?", null).setParameters(vc_id).first();
+
+			if (column != null)
+				cl.add(column);
+
+		}
+
+		return cl;
+
+	}	
+	
+	private List<String> getRefList(){
+		
+		List<String> rfl = new ArrayList<String>();
+		
+		for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
+
+			MColumn column = new Query(Env.getCtx(),
+					MColumn.Table_Name, "ad_column_id=?", null)
+					.setParameters(vc_id).first();
+
+			if (column != null)
+				rfl.add(column.getAD_Reference().getName());
+			
+			
+		}
+		
+		return rfl;
+		
+	}
+
+	
+	private String sqlStatement(String tableName, boolean isUseclientid,
+			int client_Id, int org_Id) {
+
+		StringBuilder sql = new StringBuilder();
+
+		ArrayList<String> columnlist = new ArrayList<String>();
+
+		MTable table = new Query(Env.getCtx(), MTable.Table_Name, "name=?",
+				null).setParameters(tableName).first();
+
+		if (table != null) {
+
+			sql.append("SELECT ");
+
+			for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
+
+				MColumn column = new Query(Env.getCtx(), MColumn.Table_Name,
+						"ad_column_id=?", null).setParameters(vc_id).first();
+
+				if (column != null) {
+					sql.append(column.getColumnName()).append(",");
+					columnlist.add(column.getColumnName());
+				}
+
+
+			}
+
+			// remove last ,
+			sql.setLength(sql.length() - 1);
+
+			sql.append(" from ");
+			sql.append(table.getTableName());
+
+			sql.append(" where ");
+
+			if (columnlist.contains("DateAcct")) {
+
+				sql.append("dateacct between '")
+						.append(getValidity().getRange().getFrom()).append("'");
+				sql.append(" and ");
+				sql.append("'").append(getValidity().getRange().getTo())
+						.append("'");
+
+			} else if (columnlist.contains("DateOrdered")) {
+
+				sql.append("dateordered between '")
+						.append(getValidity().getRange().getFrom()).append("'");
+				sql.append(" and ");
+				sql.append("'").append(getValidity().getRange().getTo())
+						.append("'");
+
+			} else {
+
+				sql.append("created between '")
+						.append(getValidity().getRange().getFrom()).append("'");
+				sql.append(" and ");
+				sql.append("'").append(getValidity().getRange().getTo())
+						.append("'");
+
+			}
+
+			if (isUseclientid) {
+				sql.append(" and ");
+				sql.append("ad_client_id=");
+				sql.append(client_Id);
+			}
+
+			if (org_Id != 0) {
+				sql.append(" and ");
+				sql.append("ad_org_id=");
+				sql.append(org_Id);
+			}
+
+			if (columnlist.contains("Posted")) {
+				sql.append(" and ");
+				sql.append("posted in ('b','p','Y')");
+			}
+
+		}
+
+		return sql.toString();
 
 	}	
 	
 
+	private String buildRecord(ResultSet rs, List<String> rfl) {
+
+		StringBuilder record = new StringBuilder();
+
+		try {
+
+			int col = 1;
+
+			for (String ref : rfl) {
+
+				if (ref != null) {
+
+					if ((ref.equals("ID")) || (ref.equals("Table Direct"))
+							|| (ref.equals("Table"))
+							|| (ref.equals("Search"))) {
+
+						if (rs.getObject(col) == null)
+							record.append("0");
+						else
+							record.append(rs.getObject(col).toString());
+
+					} else if ((ref.equals("String")) || (ref.equals("Text"))
+							|| (ref.equals("Text Long"))
+							|| (ref.equals("Button"))) {
+
+						if (getVariableLength().getTextEncapsulator() != null) {
+							record.append(getVariableLength()
+									.getTextEncapsulator());
+						} else {
+							record.append(DEFAUL_TEXT_ENCAPSULATOR);
+						}
+
+						if (rs.getObject(col) == null)
+							record.append("");
+						else
+							record.append(clearText(rs.getObject(col)
+									.toString()));
+
+						if (getVariableLength().getTextEncapsulator() != null) {
+							record.append(getVariableLength()
+									.getTextEncapsulator());
+						} else {
+							record.append(DEFAUL_TEXT_ENCAPSULATOR);
+						}
+
+					} else if ((ref.equals("Numeric"))
+							|| (ref.equals("Quantity"))
+							|| (ref.equals("Amount"))
+							|| (ref.equals("Integer"))) {
+
+						// Numberformat
+						StringBuilder no = new StringBuilder();
+						no.append(numberFormat.format(rs.getObject(col)));
+
+						// DecimalSymbol
+						if ((getDecimalSymbol() != null)
+								&& !(no.toString().contains(getDecimalSymbol()))) {
+							no.toString().replaceAll(DEFAULT_DECIMAL_SYMBOL,
+									getDecimalSymbol());
+						} else {
+							StringBuilder dcs = new StringBuilder();
+							dcs.append(numberFormat.getDecimalFormatSymbols()
+									.getDecimalSeparator());
+							no.toString().replaceAll(dcs.toString(),
+									DEFAULT_DECIMAL_SYMBOL);
+						}
+
+						// DigitGroupingSymbol
+						if ((getDigitGroupingSymbol() != null)
+								&& !(no.toString()
+										.contains(getDigitGroupingSymbol()))) {
+							no.toString().replaceAll(
+									DEFAULT_DIGIT_GROUPING_SYMBOL,
+									getDecimalSymbol());
+						} else {
+							StringBuilder grs = new StringBuilder();
+							grs.append(numberFormat.getDecimalFormatSymbols()
+									.getGroupingSeparator());
+
+							no.toString().replaceAll(grs.toString(),
+									DEFAULT_DIGIT_GROUPING_SYMBOL);
+						}
+
+						if (rs.getObject(col) == null)
+							record.append("0");
+						else
+							record.append(no);
+
+					} else if ((ref.equals("Date"))
+							|| (ref.equals("Date+Time"))) {
+
+						DateFormat df = new SimpleDateFormat("dd.MM.YYYY");
+
+						if (rs.getObject(col) == null)
+							record.append("00.00.0000");
+						else
+							record.append(df.format(rs.getObject(col)));
+
+					} else {
+
+						if (rs.getObject(col) == null)
+							record.append("");
+						else
+							record.append(rs.getObject(col).toString());
+
+					}
+
+				}
+
+				if (col < getColumnList().size()) {
+					if (getVariableLength().getColumnDelimiter() != null) {
+						record.append(getVariableLength().getColumnDelimiter());
+					} else {
+						record.append(DEFAULT_COLUMN_DELIMITER);
+					}
+				}
+
+				col++;
+
+			}
+
+			if (getVariableLength().getRecordDelimiter() != null)
+				record.append(getVariableLength().getRecordDelimiter());
+			else
+				record.append(DEFAULT_RECORD_DELIMITER);
+
+		} catch (SQLException e) {
+			// log.log(Level.SEVERE, sql, e);
+		}
+
+		return record.toString();
+
+	}	
+	
+	
 	private String clearText(Object object) {
 
 		String str = (String) object;

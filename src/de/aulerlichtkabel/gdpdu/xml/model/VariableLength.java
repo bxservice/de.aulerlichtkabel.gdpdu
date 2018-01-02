@@ -30,10 +30,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.compiere.model.MColumn;
-import org.compiere.model.MElementValue;
-import org.compiere.model.MFactAcct;
-import org.compiere.model.MTable;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -91,14 +87,16 @@ public class VariableLength {
 		for (MPAT_GDPdU_Export_TFields fieldlist : export_def.getFields()) {
 			
 			String columnName = fieldlist.getAD_Column().getColumnName();
-
-			// System.out.println(columnName+" -
-			// "+fieldlist.getAD_Table().getTableName()+"_ID");
-			// TODO: Flex Translation
-			if(!columnName.equals(fieldlist.getValue()))
-				columnName = fieldlist.getValue();
 			
-			// --> then use value of column
+			Boolean isValueChanged = false;
+		
+			// Value changed like account_id to c_elementvalue_id in fact_acct
+			if(!columnName.equals(fieldlist.getValue())){
+				columnName = fieldlist.getValue();
+				isValueChanged = true;
+			}
+			
+
 			
 			if (columnName.equals(fieldlist.getAD_Table().getTableName() + "_ID")) {
 
@@ -120,39 +118,22 @@ public class VariableLength {
 
 				VariableColumn vc = new VariableColumn();
 
-				if (getTranslation(fieldlist.getAD_Column().getAD_Column_ID()) == null)
+				// Value changed like account_id to c_elementvalue_id in fact_acct
+				if (isValueChanged) {
+
+					vc.setName(clean(columnName));
+
+				} else if (getTranslation(fieldlist.getAD_Column()
+						.getAD_Column_ID()) == null) {
 					vc.setName(clean(fieldlist.getAD_Column().getName()));
-				else
-					vc.setName(clean(getTranslation(fieldlist.getAD_Column().getAD_Column_ID())));
-
-				// special fact_acct
-				// **
-				// Coloum c_elementvalue_id is account_id in fact_acct
-
-				if (tableName.equals("Accounting Fact") &&
-
-						(columnName.equals("Account_ID"))) {
-
-					MTable table = new Query(Env.getCtx(), MTable.Table_Name, "tablename=?", null)
-							.setParameters(MElementValue.Table_Name).first();
-
-					if (table != null) {
-
-						if (table.get_Translation(MElementValue.COLUMNNAME_C_ElementValue_ID) == null) {
-							vc.setName(clean(MElementValue.COLUMNNAME_C_ElementValue_ID));
-						} else {
-							vc.setName(clean(table.get_Translation(MElementValue.COLUMNNAME_C_ElementValue_ID)));
-						}
-					}
-
+				} else {
+					vc.setName(clean(getTranslation(fieldlist.getAD_Column()
+							.getAD_Column_ID())));
 				}
-
-				// **
 
 				vc.setDescription(fieldlist.getDescription());
 
-				if ((fieldlist.getAD_Column().getAD_Reference().getName().contains("Integer")
-						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Search"))
+				if ((fieldlist.getAD_Column().getAD_Reference().getName().contains("Integer"))
 						&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())) {
 					vc.setNumeric(0);
 
@@ -162,9 +143,9 @@ public class VariableLength {
 
 					vc.setNumeric(2);
 
-				} else if ((fieldlist.getAD_Column().getAD_Reference().getName()
-
-						.contains("Text") || fieldlist.getAD_Column().getAD_Reference().getName().contains("String")
+				} else if ((fieldlist.getAD_Column().getAD_Reference().getName().contains("Text")
+						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Text Long")
+						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("String")
 						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Button"))
 						&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())) {
 					vc.setAlphaNumeric();
@@ -174,7 +155,8 @@ public class VariableLength {
 
 				} else if ((fieldlist.getAD_Column().getAD_Reference().getName().contains("ID")
 						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Table")
-						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Table Direct"))
+						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Table Direct")
+						|| fieldlist.getAD_Column().getAD_Reference().getName().contains("Search"))
 						&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())) {
 					vc.setNumeric(0);
 				} else if (fieldlist.getAD_Column().getAD_Reference().getName().contains("Yes-No")) {
@@ -208,7 +190,14 @@ public class VariableLength {
 
 					ForeignKey foreignKey = new ForeignKey();
 
-					if (getTranslation(fieldlist.getAD_Column().getAD_Column_ID()) == null) {
+					// Value changed like account_id to c_elementvalue_id in fact_acct
+					if (isValueChanged) {
+						
+							foreignKey.setName(clean(columnName));
+							foreignKey.setReferences(clean(columnName));
+
+							
+					} else if (getTranslation(fieldlist.getAD_Column().getAD_Column_ID()) == null) {
 						foreignKey.setName(clean(fieldlist.getAD_Column().getName()));
 						foreignKey.setReferences(clean(fieldlist.getAD_Column().getName()));
 					} else {
@@ -217,35 +206,7 @@ public class VariableLength {
 						foreignKey.setReferences(clean(getTranslation(fieldlist.getAD_Column().getAD_Column_ID())));
 					}
 
-					// special fact_acct
-					// **
-					// Coloum c_elementvalue_id is account_id in fact_acct
-
-					if (tableName.equals("Accounting Fact") &&
-
-							(columnName.equals("Account_ID"))) {
-
-						MTable table = new Query(Env.getCtx(), MTable.Table_Name, "tablename=?", null)
-								.setParameters(MElementValue.Table_Name).first();
-
-						if (table != null) {
-
-							if (table.get_Translation(MElementValue.COLUMNNAME_C_ElementValue_ID) == null) {
-								foreignKey.setName(clean(MElementValue.COLUMNNAME_C_ElementValue_ID));
-								foreignKey.setReferences(clean(MElementValue.COLUMNNAME_C_ElementValue_ID));
-
-							} else {
-								foreignKey.setName(clean(
-										table.get_Translation(MElementValue.COLUMNNAME_C_ElementValue_ID)));
-								foreignKey.setReferences(clean(
-										table.get_Translation(MElementValue.COLUMNNAME_C_ElementValue_ID)));
-							}
-						}
-
-					}
-
-					// **
-
+					
 					ListForeignKey.add(foreignKey);
 
 				}
@@ -257,54 +218,7 @@ public class VariableLength {
 		}
 
 	}
-
-	private String getColumnTableName(int columnId) {
-
-		MColumn column = new Query(Env.getCtx(), MColumn.Table_Name,
-				"ad_column_id=?", null).setParameters(columnId).first();
 		
-
-
-		if (column != null) {
-
-			
-			if (column.getAD_Table().getName().equals("Accounting Fact")&&
-
-					(column.getColumnName().equals(MFactAcct.COLUMNNAME_Record_ID))
-					||(column.getColumnName().equals(MFactAcct.COLUMNNAME_UserElement1_ID))
-					||(column.getColumnName().equals(MFactAcct.COLUMNNAME_UserElement2_ID))
-					||(column.getColumnName().equals(MFactAcct.COLUMNNAME_User1_ID))
-					||(column.getColumnName().equals(MFactAcct.COLUMNNAME_User2_ID))
-							) {
-				return null;
-			}
-			
-			
-			
-			String tableName = column.getColumnName().substring(0,
-					column.getColumnName().length() - 3);
-			
-//			System.out.println(tableName);
-			
-			MTable table = new Query(Env.getCtx(), MTable.Table_Name, "tablename=?",
-					null).setParameters(tableName).first();
-			
-			if (table != null) {
-
-					String tableTrl =  getTableTranslation(table.getAD_Table_ID());
-					if(tableTrl != null)
-						return clean(tableTrl);
-					else
-						return clean(tableName);
-	
-			}
-
-		}
-		
-		return null;
-
-	}
-	
 	
 	public String getTableTranslation(int table_Id) {
 
