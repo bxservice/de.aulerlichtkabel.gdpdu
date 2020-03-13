@@ -7,12 +7,16 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.adempiere.base;bundle-version="7.1.0",
  org.adempiere.plugin.utils;bundle-version="7.1.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/*.xml
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Patric Maßing (Hans Auler GmbH)
 Export-Package: de.aulerlichtkabel.gdpdu.component,
  de.aulerlichtkabel.gdpdu.model,
  de.aulerlichtkabel.gdpdu.process,
  de.aulerlichtkabel.gdpdu.xml.model
-Bundle-ClassPath: lib/,
- .
+Service-Component: OSGI-INF/modelfactory.xml, OSGI-INF/processfactory.xml
+Import-Package: com.sun.xml.bind;version="2.3.2",
+ com.sun.xml.bind.marshaller;version="2.3.2",
+ groovy.xml.jaxb;version="2.5.3",
+ javax.xml.bind;version="2.3.0",
+ javax.xml.bind.annotation;version="2.3.2"
+

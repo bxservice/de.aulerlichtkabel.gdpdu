@@ -50,7 +50,7 @@ public class FixedLength {
 
 	private Integer length = null;
 	
-	private Integer pos= new Integer("0");
+	private Integer pos = Integer.valueOf(0);
 
 	
 	

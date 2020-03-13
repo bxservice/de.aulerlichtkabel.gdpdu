@@ -7,6 +7,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/jaxb-api-2.4.0-b180830.0359.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

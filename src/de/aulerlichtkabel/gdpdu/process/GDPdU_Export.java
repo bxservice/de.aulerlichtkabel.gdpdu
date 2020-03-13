@@ -109,8 +109,8 @@ public class GDPdU_Export extends SvrProcess {
 			JAXBContext context = JAXBContext.newInstance(DataSet.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setProperty("com.sun.xml.internal.bind.xmlDeclaration", Boolean.FALSE);
-			m.setProperty("com.sun.xml.internal.bind.xmlHeaders",
+			m.setProperty("jaxb.fragment", true);
+			m.setProperty("com.sun.xml.bind.xmlHeaders",
 					"﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 					+ "\n"
 					+ "<!DOCTYPE DataSet SYSTEM \"gdpdu-01-09-2004.dtd\">");

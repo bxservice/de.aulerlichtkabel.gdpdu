@@ -63,7 +63,7 @@ public class DataSet {
 	private Media media = null;
 	
 
-	Integer mediaNo = new Integer("1");
+	Integer mediaNo = Integer.valueOf(1);
 	
 	
 	public DataSet(Properties ctx, int pat_GDPdU_ID, String trxName) {
