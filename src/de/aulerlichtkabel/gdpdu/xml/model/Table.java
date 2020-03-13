@@ -520,7 +520,9 @@ public class Table {
 
 						// Numberformat
 						StringBuilder no = new StringBuilder();
-						no.append(numberFormat.format(rs.getObject(col)));
+						Object number = rs.getObject(col);
+						if (number != null)
+							no.append(numberFormat.format(rs.getObject(col)));
 
 						// DecimalSymbol
 						if ((getDecimalSymbol() != null)
