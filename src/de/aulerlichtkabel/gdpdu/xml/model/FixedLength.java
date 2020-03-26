@@ -29,7 +29,9 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.compiere.model.Query;
+import org.compiere.model.MColumn;
+import org.compiere.model.MTable;
+import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 
 import de.aulerlichtkabel.gdpdu.model.MPAT_GDPdU_Export_Def;
@@ -83,13 +85,17 @@ public class FixedLength {
 		fixedColumnlist.clear();
 		ListForeignKey.clear();
 
-		MPAT_GDPdU_Export_Def export_def = new Query(Env.getCtx(), MPAT_GDPdU_Export_Def.Table_Name,
-				"gdpdu_export_def_id=?", null).setParameters(exportDef_id).first();
+		MPAT_GDPdU_Export_Def export_def = new MPAT_GDPdU_Export_Def(Env.getCtx(), exportDef_id, null);
 		
 		for(MPAT_GDPdU_Export_TFields fieldlist : export_def.getFields()){
 			
-			if(fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
-				getFixedPrimaryKey().setName(fieldlist.getAD_Column().getName());
+			MColumn column = MColumn.get(Env.getCtx(), fieldlist.getAD_Column_ID());
+			
+			if (column == null)
+				continue;
+			
+			if (column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))){
+				getFixedPrimaryKey().setName(column.getName());
 				getFixedPrimaryKey().setDescription(fieldlist.getDescription());
 				
 			}
@@ -101,15 +107,28 @@ public class FixedLength {
 			fc.setDescription(fieldlist.getDescription());
 			
 			
-			if((fieldlist.getAD_Column().getAD_Reference().getName().contains("Amount")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Integer")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Quantity")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Number"))&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
+			if ((column.getAD_Reference_ID() == DisplayType.Quantity
+					|| column.getAD_Reference_ID() == DisplayType.Number
+					|| column.getAD_Reference_ID() == DisplayType.Amount
+					|| column.getAD_Reference_ID() == DisplayType.Integer)
+					&& !column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))) {
 				fc.setNumeric();
-			} else if((fieldlist.getAD_Column().getAD_Reference().getName().contains("Text")||fieldlist.getAD_Column().getAD_Reference().getName().contains("String"))&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
+			} else if ((column.getAD_Reference_ID() == DisplayType.Text
+					|| column.getAD_Reference_ID() == DisplayType.TextLong
+					|| column.getAD_Reference_ID() == DisplayType.String
+					|| column.getAD_Reference_ID() == DisplayType.Button)
+					&& !column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))){
 				fc.setAlphaNumeric();
-			} else if(fieldlist.getAD_Column().getAD_Reference().getName().contains("Date")&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
+			} else if(column.getAD_Reference_ID() == DisplayType.Date
+					&& !column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))) {
 				fc.setDate();
-			} else if((fieldlist.getAD_Column().getAD_Reference().getName().contains("ID")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Table")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Table Direct"))&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
+			} else if ((column.getAD_Reference_ID() == DisplayType.ID
+					|| column.getAD_Reference_ID() == DisplayType.Table
+					|| column.getAD_Reference_ID() == DisplayType.TableDir
+					|| column.getAD_Reference_ID() == DisplayType.Search)
+					&& !column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))) {
 				fc.setNumeric();
-			} else if(fieldlist.getAD_Column().getAD_Reference().getName().contains("Yes-No")){
+			} else if (column.getAD_Reference_ID() == DisplayType.YesNo) {
 				fc.setMap();
 				fc.getMap().setFrom("Y");
 				fc.getMap().setTo("true");
@@ -118,16 +137,20 @@ public class FixedLength {
 			}
 			
 
-			pos+=fieldlist.getAD_Column().getFieldLength();
+			pos+=column.getFieldLength();
 
 			fc.setFixedRange();
 			fc.getFixedRange().setFrom(pos);
-			fc.getFixedRange().setLength(fieldlist.getAD_Column().getFieldLength());
+			fc.getFixedRange().setLength(column.getFieldLength());
 			
 			fixedColumnlist.add(fc);
 				
 			
-			if((fieldlist.getAD_Column().getAD_Reference().getName().contains("ID")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Table")||fieldlist.getAD_Column().getAD_Reference().getName().contains("Table Direct"))&& !fieldlist.getAD_Column().getName().contains(fieldlist.getAD_Table().getName())){
+			if ((column.getAD_Reference_ID() == DisplayType.ID
+					|| column.getAD_Reference_ID() == DisplayType.Table
+					|| column.getAD_Reference_ID() == DisplayType.TableDir
+					|| column.getAD_Reference_ID() == DisplayType.Search)
+					&& !column.getName().contains(MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()))) {
 				ForeignKey foreignKey = new ForeignKey();
 				foreignKey.setName(fieldlist.getAD_Column().getColumnName());
 				foreignKey.setReferences(fieldlist.getAD_Column().getAD_Reference().getName());

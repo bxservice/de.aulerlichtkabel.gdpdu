@@ -311,7 +311,6 @@ public class Table {
 
 					pstmt = DB.prepareStatement(sql, null);
 					rs = pstmt.executeQuery();
-
 					while (rs.next())
 						try {
 							bufferedCsvoutput.write(buildRecord(rs, rfl));
@@ -327,8 +326,6 @@ public class Table {
 
 						e.printStackTrace();
 					}
-
-
 				} catch (SQLException e) {
 					log.log(Level.SEVERE, sql, e);
 				} finally {
@@ -337,7 +334,6 @@ public class Table {
 					pstmt = null;
 				}
 
-			
 			ColumnIDList.clear();
 		
 		}
