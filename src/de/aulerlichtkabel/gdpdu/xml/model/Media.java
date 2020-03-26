@@ -95,16 +95,11 @@ public class Media {
 									+ ".csv"));
 							tableNameTranslation.append(cleanTranslation(tbl
 									.get_Translation(MTable.COLUMNNAME_Name)));
-
 						} else {
-
-							table.setName(tableDef.getAD_Table().getName());
-							table.setURL(tableDef.getAD_Table().getName()
-									+ ".csv");
-							tableNameTranslation.append(tableDef.getAD_Table()
-									.getName());
+							table.setName(tbl.getName());
+							table.setURL(tbl.getName() + ".csv");
+							tableNameTranslation.append(tbl.getName());
 						}
-
 					}
 
 					table.setDescription(tableDef.getDescription());
