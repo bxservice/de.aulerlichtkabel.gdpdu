@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.compiere.model.MColumn;
+import org.compiere.model.MReference;
 import org.compiere.model.MTable;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
@@ -315,20 +316,16 @@ public class Table {
 						try {
 							bufferedCsvoutput.write(buildRecord(rs, rfl));
 						} catch (IOException e) {
-
-							e.printStackTrace();
+							log.severe(e.getMessage());
 						}
-					
-					
-					try {
-						csvoutput.close();
-					} catch (IOException e) {
-
-						e.printStackTrace();
-					}
 				} catch (SQLException e) {
 					log.log(Level.SEVERE, sql, e);
 				} finally {
+					try  {
+						csvoutput.close();
+					} catch (IOException e) {
+						log.severe(e.getMessage());
+					}
 					DB.close(rs, pstmt);
 					rs = null;
 					pstmt = null;
@@ -366,9 +363,7 @@ public class Table {
 			MColumn column =  MColumn.get(Env.getCtx(), vc_id);
 
 			if (column != null)
-				rfl.add(column.getAD_Reference().getName());
-			
-			
+				rfl.add(MReference.get(Env.getCtx(), column.getAD_Reference_ID()).getName());
 		}
 		
 		return rfl;
@@ -451,7 +446,8 @@ public class Table {
 				sql.append(" and ");
 				sql.append("posted in ('b','p','Y')");
 			}
-
+			
+			sql.append(" ORDER BY 1");
 		}
 
 		return sql.toString();

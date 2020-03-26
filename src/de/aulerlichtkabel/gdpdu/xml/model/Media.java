@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.compiere.model.MTable;
-import org.compiere.model.Query;
 import org.compiere.util.Env;
 
 import de.aulerlichtkabel.gdpdu.model.MPAT_GDPdU;
@@ -68,9 +67,7 @@ public class Media {
 
 	public void fillList(int pat_GDPdU_ID, String p_PathDictionary) throws ZipException, IOException {
 
-		MPAT_GDPdU pat_gdpdu = new Query(Env.getCtx(), MPAT_GDPdU.Table_Name, "pat_gdpdu_id=?",
-				null).setParameters(pat_GDPdU_ID).first();
-
+		MPAT_GDPdU pat_gdpdu = new MPAT_GDPdU(Env.getCtx(), pat_GDPdU_ID, null);
 		
 		if (pat_gdpdu != null) {
 			
