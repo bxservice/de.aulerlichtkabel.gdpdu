@@ -36,6 +36,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -43,6 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.compiere.model.MColumn;
 import org.compiere.model.MTable;
 import org.compiere.model.Query;
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
@@ -51,6 +53,8 @@ import org.compiere.util.Env;
 		"decimalSymbol", "digitGroupingSymbol", "skipNumBytes", "epoch",
 		"variableLength", "fixedLength", "length" })
 public class Table {
+	
+	protected CLogger			log = CLogger.getCLogger (getClass());
 
 	private String url = null;
 	private String name = null;
@@ -304,14 +308,12 @@ public class Table {
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
 
+				String sql = sqlStatement(tableName, isUseclientid, client_Id, org_Id);
 				try {
 
-					pstmt = DB.prepareStatement(
-							sqlStatement(tableName, isUseclientid, client_Id,
-									org_Id), null);
+					pstmt = DB.prepareStatement(sql, null);
 					rs = pstmt.executeQuery();
 
-						
 					while (rs.next())
 						try {
 							bufferedCsvoutput.write(buildRecord(rs, rfl));
@@ -330,7 +332,7 @@ public class Table {
 
 
 				} catch (SQLException e) {
-					// log.log(Level.SEVERE, sql, e);
+					log.log(Level.SEVERE, sql, e);
 				} finally {
 					DB.close(rs, pstmt);
 					rs = null;
@@ -596,8 +598,8 @@ public class Table {
 			else
 				record.append(DEFAULT_RECORD_DELIMITER);
 
-		} catch (SQLException e) {
-			// log.log(Level.SEVERE, sql, e);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage());
 		}
 
 		return record.toString();

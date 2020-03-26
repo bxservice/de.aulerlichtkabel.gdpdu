@@ -143,7 +143,7 @@ public class DataSet {
 		return translation.replaceAll("Ü", "Ue").replaceAll("Ä", "Ae")
 				.replaceAll("Ö", "Oe").replaceAll("ü", "ue")
 				.replaceAll("ä", "ae").replaceAll("ö", "oe")
-				.replaceAll("ß", "sz").replaceAll("\"", "&quot;")
+				.replaceAll("ß", "ss").replaceAll("\"", "&quot;")
 				.replaceAll("&", "&amp;").replaceAll("<", "&lt;")
 				.replaceAll(">", "&gt;");
 
