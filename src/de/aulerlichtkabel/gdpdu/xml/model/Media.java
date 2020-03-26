@@ -80,9 +80,7 @@ public class Media {
 
 					Table table = new Table();
 
-					MTable tbl = new Query(Env.getCtx(), MTable.Table_Name,
-							"ad_table_id=?", null).setParameters(
-							tableDef.getAD_Table_ID()).first();
+					MTable tbl = MTable.get(Env.getCtx(), tableDef.getAD_Table_ID());
 
 					StringBuilder tableNameTranslation = new StringBuilder();
 
@@ -144,7 +142,7 @@ public class Media {
 
 					tableList.add(table);
 
-				table.writeCSVFile(false, tableDef.getAD_Table().getName(),
+				table.writeCSVFile(false, tbl.getTableName(),
 						tableNameTranslation.toString(),
 						tableDef.isUse_AD_Client_ID(),
 						tableDef.getAD_Client_ID(), tableDef.getAD_Org_ID(),

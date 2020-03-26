@@ -43,7 +43,6 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.compiere.model.MColumn;
 import org.compiere.model.MTable;
-import org.compiere.model.Query;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
@@ -292,7 +291,6 @@ public class Table {
 			Writer csvoutput = null;
 			BufferedWriter bufferedCsvoutput = null;
 			
-
 				try {
 					csvoutput = new FileWriter(p_PathDictionary
 							+ tableNameTranslation + ".csv");
@@ -352,8 +350,7 @@ public class Table {
 
 		for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
 
-			MColumn column = new Query(Env.getCtx(), MColumn.Table_Name,
-					"ad_column_id=?", null).setParameters(vc_id).first();
+			MColumn column = MColumn.get(Env.getCtx(), vc_id);
 
 			if (column != null)
 				cl.add(column);
@@ -370,9 +367,7 @@ public class Table {
 		
 		for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
 
-			MColumn column = new Query(Env.getCtx(),
-					MColumn.Table_Name, "ad_column_id=?", null)
-					.setParameters(vc_id).first();
+			MColumn column =  MColumn.get(Env.getCtx(), vc_id);
 
 			if (column != null)
 				rfl.add(column.getAD_Reference().getName());
@@ -392,8 +387,7 @@ public class Table {
 
 		ArrayList<String> columnlist = new ArrayList<String>();
 
-		MTable table = new Query(Env.getCtx(), MTable.Table_Name, "name=?",
-				null).setParameters(tableName).first();
+		MTable table = MTable.get(Env.getCtx(), tableName);
 
 		if (table != null) {
 
@@ -401,8 +395,7 @@ public class Table {
 
 			for (Integer vc_id : ColumnIDList.getColumn_idlist()) {
 
-				MColumn column = new Query(Env.getCtx(), MColumn.Table_Name,
-						"ad_column_id=?", null).setParameters(vc_id).first();
+				MColumn column =  MColumn.get(Env.getCtx(), vc_id);
 
 				if (column != null) {
 					sql.append(column.getColumnName()).append(",");
