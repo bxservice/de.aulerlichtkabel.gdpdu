@@ -322,7 +322,7 @@ public class Table {
 					log.log(Level.SEVERE, sql, e);
 				} finally {
 					try  {
-						csvoutput.close();
+						bufferedCsvoutput.close();
 					} catch (IOException e) {
 						log.severe(e.getMessage());
 					}
