@@ -110,20 +110,26 @@ public class Media {
 					table.getValidity().setFormat("DD.MM.YYYY");
 					DateFormat dfFrom;
 					dfFrom = DateFormat.getDateInstance(DateFormat.MEDIUM);
-					java.util.Date dateFrom = new java.util.Date(tableDef.getDateFrom().getTime());
-					table.getValidity().getRange()
-							.setFrom(dfFrom.format(dateFrom));					
+					if (tableDef.getDateFrom() != null) {
+						java.util.Date dateFrom = new java.util.Date(tableDef.getDateFrom().getTime());
+						table.getValidity().getRange()
+								.setFrom(dfFrom.format(dateFrom));					
+					}
 					DateFormat dfTo;
 					dfTo = DateFormat.getDateInstance(DateFormat.MEDIUM);
-					java.util.Date dateTo = new java.util.Date(tableDef.getDateTo().getTime());
-					table.getValidity().getRange()
-							.setTo(dfTo.format(dateTo));
+					if (tableDef.getDateTo() != null) {
+						java.util.Date dateTo = new java.util.Date(tableDef.getDateTo().getTime());
+						table.getValidity().getRange()
+								.setTo(dfTo.format(dateTo));
+					}
+
 					table.setDecimalSymbol(tableDef.getDecimalSymbol());
 					table.setDigitGroupingSymbol(tableDef
 							.getDigitGroupingSymbol());
 					if(tableDef.isFixedLength())
 						table.setLength(tableDef.getLength().intValue());
-					
+					table.setAD_Column_ID(tableDef.getPAT_DateColumn_ID());
+
 					// TODO: Fixed or Variable Length
 					// At the moment only Variable Length 
 					// Fixed Length prepared

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -80,7 +81,8 @@ public class Table {
 
 	// Format
 	DecimalFormat numberFormat = DisplayType.getNumberFormat(DisplayType.Amount);
-	
+	@XmlTransient
+	private Integer AD_Column_ID = 0;
 
 	public Table() {
 	}
@@ -211,6 +213,18 @@ public class Table {
 	 */
 	public void setFixedLength() {
 		this.fixedLength = new FixedLength();
+	}
+	
+	public String getDateFrom() {
+		if (getValidity() != null && getValidity().getRange() != null)
+			return getValidity().getRange().getFrom();
+		return null;
+	}
+
+	public String getDateTo() {
+		if (getValidity() != null && getValidity().getRange() != null)
+			return getValidity().getRange().getTo();
+		return null;
 	}
 
 	public void fillTable(int exportDef_id, boolean isFixedLength,
@@ -412,34 +426,16 @@ public class Table {
 
 			sql.append(" where ");
 
-			if (columnlist.contains("DateAcct")) {
-
-				sql.append("dateacct between '")
-						.append(getValidity().getRange().getFrom()).append("'");
-				sql.append(" and ");
-				sql.append("'").append(getValidity().getRange().getTo())
-						.append("'");
-
-			} else if (columnlist.contains("DateOrdered")) {
-
-				sql.append("dateordered between '")
-						.append(getValidity().getRange().getFrom()).append("'");
-				sql.append(" and ");
-				sql.append("'").append(getValidity().getRange().getTo())
-						.append("'");
-
-			} else {
-
-				sql.append("created between '")
-						.append(getValidity().getRange().getFrom()).append("'");
-				sql.append(" and ");
-				sql.append("'").append(getValidity().getRange().getTo())
-						.append("'");
-
+			if (getDateFrom() != null && getDateTo() != null && getAD_Column_ID() > 0) {
+				sql.append(MColumn.getColumnName(Env.getCtx(), getAD_Column_ID()))
+				.append(" BETWEEN '")
+				.append(getValidity().getRange().getFrom()).append("'")
+				.append(" AND ")
+				.append("'").append(getValidity().getRange().getTo()).append("'")
+				.append(" AND ");
 			}
 
 			if (isUseclientid) {
-				sql.append(" and ");
 				sql.append("ad_client_id=");
 				sql.append(client_Id);
 			}
@@ -625,6 +621,14 @@ public class Table {
 		return str;
 
 	}
-
+	
+	@XmlTransient
+	public Integer getAD_Column_ID() {
+		return AD_Column_ID;
+	}
+	
+	public void setAD_Column_ID(Integer AD_Column_ID) {
+		this.AD_Column_ID = AD_Column_ID;
+	}
 
 }

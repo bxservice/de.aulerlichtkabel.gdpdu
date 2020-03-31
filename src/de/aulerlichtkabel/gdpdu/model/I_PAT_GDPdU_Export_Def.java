@@ -1,27 +1,19 @@
-/*****************************************************************************
- * Plug-in GdPdU-Export for iDempiere ERP & CRM Smart Business Solution      *
- * Copyright (C) 2016  Patric Maßing (Hans Auler GmbH)                       *
- *                                                                           *
- * This plug-in is free software; you can redistribute it and/or modify      *
- * it under the terms of the GNU General Public License as published by      *
- * the Free Software Foundation; either version 2 of the License, or         *
- * (at your option) any later version.                                       *
- *                                                                           *
- * This plug-in is distributed in the hope that it will be useful,           *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
- * GNU General Public License for more details.                              *
- *                                                                           *
- * You should have received a copy of the GNU General Public License along   *
- * with this plug-in; If not, see <http://www.gnu.org/licenses/>.            *
- ****************************************************************************/
- 
- /**
-  * @author Patric Maßing (Hans Auler GmbH)
-  * 2016
- */
-
-
+/******************************************************************************
+ * Product: iDempiere ERP & CRM Smart Business Solution                       *
+ * Copyright (C) 1999-2012 ComPiere, Inc. All Rights Reserved.                *
+ * This program is free software, you can redistribute it and/or modify it    *
+ * under the terms version 2 of the GNU General Public License as published   *
+ * by the Free Software Foundation. This program is distributed in the hope   *
+ * that it will be useful, but WITHOUT ANY WARRANTY, without even the implied *
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.           *
+ * See the GNU General Public License for more details.                       *
+ * You should have received a copy of the GNU General Public License along    *
+ * with this program, if not, write to the Free Software Foundation, Inc.,    *
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.                     *
+ * For the text or an alternative of this public license, you may reach us    *
+ * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
+ * or via info@compiere.org or http://www.compiere.org/license.html           *
+ *****************************************************************************/
 package de.aulerlichtkabel.gdpdu.model;
 
 import java.math.BigDecimal;
@@ -31,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for PAT_GDPdU_Export_Def
  *  @author iDempiere (generated) 
- *  @version Release 3.1
+ *  @version Release 7.1
  */
 @SuppressWarnings("all")
 public interface I_PAT_GDPdU_Export_Def 
@@ -40,7 +32,7 @@ public interface I_PAT_GDPdU_Export_Def
     /** TableName=PAT_GDPdU_Export_Def */
     public static final String Table_Name = "PAT_GDPdU_Export_Def";
 
-    /** AD_Table_ID=1000038 */
+    /** AD_Table_ID=1000059 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -95,15 +87,6 @@ public interface I_PAT_GDPdU_Export_Def
 
 	/** Get ColumnDelimiter	  */
 	public String getColumnDelimiter();
-
-    /** Column name Command */
-    public static final String COLUMNNAME_Command = "Command";
-
-	/** Set Command	  */
-	public void setCommand (String Command);
-
-	/** Get Command	  */
-	public String getCommand();
 
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
@@ -244,13 +227,37 @@ public interface I_PAT_GDPdU_Export_Def
 	  */
 	public String getName();
 
+    /** Column name PAT_Command */
+    public static final String COLUMNNAME_PAT_Command = "PAT_Command";
+
+	/** Set Command	  */
+	public void setPAT_Command (String PAT_Command);
+
+	/** Get Command	  */
+	public String getPAT_Command();
+
+    /** Column name PAT_DateColumn_ID */
+    public static final String COLUMNNAME_PAT_DateColumn_ID = "PAT_DateColumn_ID";
+
+	/** Set Date Filter.
+	  * The corresponding records will be filtered by this date column
+	  */
+	public void setPAT_DateColumn_ID (int PAT_DateColumn_ID);
+
+	/** Get Date Filter.
+	  * The corresponding records will be filtered by this date column
+	  */
+	public int getPAT_DateColumn_ID();
+
+	public org.compiere.model.I_AD_Column getPAT_DateColumn() throws RuntimeException;
+
     /** Column name PAT_GDPdU_Export_Def_ID */
     public static final String COLUMNNAME_PAT_GDPdU_Export_Def_ID = "PAT_GDPdU_Export_Def_ID";
 
-	/** Set PAT_GDPdU_Export_Def_ID	  */
+	/** Set Export Definition	  */
 	public void setPAT_GDPdU_Export_Def_ID (int PAT_GDPdU_Export_Def_ID);
 
-	/** Get PAT_GDPdU_Export_Def_ID	  */
+	/** Get Export Definition	  */
 	public int getPAT_GDPdU_Export_Def_ID();
 
     /** Column name PAT_GDPdU_Export_Def_UU */
@@ -265,10 +272,10 @@ public interface I_PAT_GDPdU_Export_Def
     /** Column name PAT_GDPdU_ID */
     public static final String COLUMNNAME_PAT_GDPdU_ID = "PAT_GDPdU_ID";
 
-	/** Set PAT_GDPdU_ID	  */
+	/** Set GDPdU/GoBD Export	  */
 	public void setPAT_GDPdU_ID (int PAT_GDPdU_ID);
 
-	/** Get PAT_GDPdU_ID	  */
+	/** Get GDPdU/GoBD Export	  */
 	public int getPAT_GDPdU_ID();
 
 	public I_PAT_GDPdU getPAT_GDPdU() throws RuntimeException;
@@ -276,10 +283,10 @@ public interface I_PAT_GDPdU_Export_Def
     /** Column name PAT_GetColumns */
     public static final String COLUMNNAME_PAT_GetColumns = "PAT_GetColumns";
 
-	/** Set PAT_GetColumns	  */
+	/** Set Create Fields to Export	  */
 	public void setPAT_GetColumns (String PAT_GetColumns);
 
-	/** Get PAT_GetColumns	  */
+	/** Get Create Fields to Export	  */
 	public String getPAT_GetColumns();
 
     /** Column name RecordDelimiter */
@@ -341,12 +348,12 @@ public interface I_PAT_GDPdU_Export_Def
     /** Column name Use_AD_Client_ID */
     public static final String COLUMNNAME_Use_AD_Client_ID = "Use_AD_Client_ID";
 
-	/** Set Use_AD_Client_ID.
+	/** Set Current Client Only.
 	  * Filter the information for the selected client
 	  */
 	public void setUse_AD_Client_ID (boolean Use_AD_Client_ID);
 
-	/** Get Use_AD_Client_ID.
+	/** Get Current Client Only.
 	  * Filter the information for the selected client
 	  */
 	public boolean isUse_AD_Client_ID();

@@ -1,27 +1,19 @@
-/*****************************************************************************
- * Plug-in GdPdU-Export for iDempiere ERP & CRM Smart Business Solution      *
- * Copyright (C) 2016  Patric Maßing (Hans Auler GmbH)                       *
- *                                                                           *
- * This plug-in is free software; you can redistribute it and/or modify      *
- * it under the terms of the GNU General Public License as published by      *
- * the Free Software Foundation; either version 2 of the License, or         *
- * (at your option) any later version.                                       *
- *                                                                           *
- * This plug-in is distributed in the hope that it will be useful,           *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of            *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             *
- * GNU General Public License for more details.                              *
- *                                                                           *
- * You should have received a copy of the GNU General Public License along   *
- * with this plug-in; If not, see <http://www.gnu.org/licenses/>.            *
- ****************************************************************************/
- 
- /**
-  * @author Patric Maßing (Hans Auler GmbH)
-  * 2016
- */
-
-
+/******************************************************************************
+ * Product: iDempiere ERP & CRM Smart Business Solution                       *
+ * Copyright (C) 1999-2012 ComPiere, Inc. All Rights Reserved.                *
+ * This program is free software, you can redistribute it and/or modify it    *
+ * under the terms version 2 of the GNU General Public License as published   *
+ * by the Free Software Foundation. This program is distributed in the hope   *
+ * that it will be useful, but WITHOUT ANY WARRANTY, without even the implied *
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.           *
+ * See the GNU General Public License for more details.                       *
+ * You should have received a copy of the GNU General Public License along    *
+ * with this program, if not, write to the Free Software Foundation, Inc.,    *
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.                     *
+ * For the text or an alternative of this public license, you may reach us    *
+ * ComPiere, Inc., 2620 Augustine Dr. #245, Santa Clara, CA 95054, USA        *
+ * or via info@compiere.org or http://www.compiere.org/license.html           *
+ *****************************************************************************/
 /** Generated Model - DO NOT CHANGE */
 package de.aulerlichtkabel.gdpdu.model;
 
@@ -34,14 +26,14 @@ import org.compiere.util.Env;
 
 /** Generated Model for PAT_GDPdU_Export_Def
  *  @author iDempiere (generated) 
- *  @version Release 3.1 - $Id$ */
+ *  @version Release 7.1 - $Id$ */
 public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def, I_Persistent 
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20171201L;
+	private static final long serialVersionUID = 20200331L;
 
     /** Standard Constructor */
     public X_PAT_GDPdU_Export_Def (Properties ctx, int PAT_GDPdU_Export_Def_ID, String trxName)
@@ -49,8 +41,6 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
       super (ctx, PAT_GDPdU_Export_Def_ID, trxName);
       /** if (PAT_GDPdU_Export_Def_ID == 0)
         {
-			setDateFrom (new Timestamp( System.currentTimeMillis() ));
-			setDateTo (new Timestamp( System.currentTimeMillis() ));
 			setDecimalSymbol (null);
 			setDescription (null);
 			setDigitGroupingSymbol (null);
@@ -128,20 +118,6 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 	public String getColumnDelimiter () 
 	{
 		return (String)get_Value(COLUMNNAME_ColumnDelimiter);
-	}
-
-	/** Set Command.
-		@param Command Command	  */
-	public void setCommand (String Command)
-	{
-		set_Value (COLUMNNAME_Command, Command);
-	}
-
-	/** Get Command.
-		@return Command	  */
-	public String getCommand () 
-	{
-		return (String)get_Value(COLUMNNAME_Command);
 	}
 
 	/** Set Date From.
@@ -312,8 +288,50 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 		return (String)get_Value(COLUMNNAME_Name);
 	}
 
-	/** Set PAT_GDPdU_Export_Def_ID.
-		@param PAT_GDPdU_Export_Def_ID PAT_GDPdU_Export_Def_ID	  */
+	/** Set Command.
+		@param PAT_Command Command	  */
+	public void setPAT_Command (String PAT_Command)
+	{
+		set_Value (COLUMNNAME_PAT_Command, PAT_Command);
+	}
+
+	/** Get Command.
+		@return Command	  */
+	public String getPAT_Command () 
+	{
+		return (String)get_Value(COLUMNNAME_PAT_Command);
+	}
+
+	public org.compiere.model.I_AD_Column getPAT_DateColumn() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_Column)MTable.get(getCtx(), org.compiere.model.I_AD_Column.Table_Name)
+			.getPO(getPAT_DateColumn_ID(), get_TrxName());	}
+
+	/** Set Date Filter.
+		@param PAT_DateColumn_ID 
+		The corresponding records will be filtered by this date column
+	  */
+	public void setPAT_DateColumn_ID (int PAT_DateColumn_ID)
+	{
+		if (PAT_DateColumn_ID < 1) 
+			set_Value (COLUMNNAME_PAT_DateColumn_ID, null);
+		else 
+			set_Value (COLUMNNAME_PAT_DateColumn_ID, Integer.valueOf(PAT_DateColumn_ID));
+	}
+
+	/** Get Date Filter.
+		@return The corresponding records will be filtered by this date column
+	  */
+	public int getPAT_DateColumn_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PAT_DateColumn_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Export Definition.
+		@param PAT_GDPdU_Export_Def_ID Export Definition	  */
 	public void setPAT_GDPdU_Export_Def_ID (int PAT_GDPdU_Export_Def_ID)
 	{
 		if (PAT_GDPdU_Export_Def_ID < 1) 
@@ -322,8 +340,8 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 			set_ValueNoCheck (COLUMNNAME_PAT_GDPdU_Export_Def_ID, Integer.valueOf(PAT_GDPdU_Export_Def_ID));
 	}
 
-	/** Get PAT_GDPdU_Export_Def_ID.
-		@return PAT_GDPdU_Export_Def_ID	  */
+	/** Get Export Definition.
+		@return Export Definition	  */
 	public int getPAT_GDPdU_Export_Def_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_PAT_GDPdU_Export_Def_ID);
@@ -351,8 +369,8 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 		return (I_PAT_GDPdU)MTable.get(getCtx(), I_PAT_GDPdU.Table_Name)
 			.getPO(getPAT_GDPdU_ID(), get_TrxName());	}
 
-	/** Set PAT_GDPdU_ID.
-		@param PAT_GDPdU_ID PAT_GDPdU_ID	  */
+	/** Set GDPdU/GoBD Export.
+		@param PAT_GDPdU_ID GDPdU/GoBD Export	  */
 	public void setPAT_GDPdU_ID (int PAT_GDPdU_ID)
 	{
 		if (PAT_GDPdU_ID < 1) 
@@ -361,8 +379,8 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 			set_ValueNoCheck (COLUMNNAME_PAT_GDPdU_ID, Integer.valueOf(PAT_GDPdU_ID));
 	}
 
-	/** Get PAT_GDPdU_ID.
-		@return PAT_GDPdU_ID	  */
+	/** Get GDPdU/GoBD Export.
+		@return GDPdU/GoBD Export	  */
 	public int getPAT_GDPdU_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_PAT_GDPdU_ID);
@@ -371,15 +389,15 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 		return ii.intValue();
 	}
 
-	/** Set PAT_GetColumns.
-		@param PAT_GetColumns PAT_GetColumns	  */
+	/** Set Create Fields to Export.
+		@param PAT_GetColumns Create Fields to Export	  */
 	public void setPAT_GetColumns (String PAT_GetColumns)
 	{
 		set_Value (COLUMNNAME_PAT_GetColumns, PAT_GetColumns);
 	}
 
-	/** Get PAT_GetColumns.
-		@return PAT_GetColumns	  */
+	/** Get Create Fields to Export.
+		@return Create Fields to Export	  */
 	public String getPAT_GetColumns () 
 	{
 		return (String)get_Value(COLUMNNAME_PAT_GetColumns);
@@ -447,7 +465,7 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 		return (String)get_Value(COLUMNNAME_URL);
 	}
 
-	/** Set Use_AD_Client_ID.
+	/** Set Current Client Only.
 		@param Use_AD_Client_ID 
 		Filter the information for the selected client
 	  */
@@ -456,7 +474,7 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 		set_Value (COLUMNNAME_Use_AD_Client_ID, Boolean.valueOf(Use_AD_Client_ID));
 	}
 
-	/** Get Use_AD_Client_ID.
+	/** Get Current Client Only.
 		@return Filter the information for the selected client
 	  */
 	public boolean isUse_AD_Client_ID () 
