@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.compiere.model.MColumn;
 import org.compiere.model.MTable;
+import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
@@ -43,6 +44,8 @@ import de.aulerlichtkabel.gdpdu.model.MPAT_GDPdU_Export_TFields;
 		"textEncapsulator", "variablePrimaryKey", "variableColumnlist",
 		"ListForeignKey" })
 public class VariableLength {
+	
+	protected CLogger log = CLogger.getCLogger (VariableLength.class);
 
 	private String columnDelimiter = null;
 	private String recordDelimiter = null;
@@ -88,6 +91,10 @@ public class VariableLength {
 		for (MPAT_GDPdU_Export_TFields fieldlist : export_def.getFields()) {
 			
 			MColumn column = MColumn.get(Env.getCtx(), fieldlist.getAD_Column_ID());
+			if (fieldlist.getAD_Column_ID() <= 0 || column == null || column.getColumnName() == null) {
+				log.warning("Column not found " + fieldlist.getValue());
+				continue;
+			}
 			String columnName = column.getColumnName();
 			
 			Boolean isValueChanged = false;

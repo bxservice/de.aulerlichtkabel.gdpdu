@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MColumn;
 import org.compiere.model.MReference;
 import org.compiere.model.MTable;
@@ -216,6 +217,8 @@ public class Table {
 			String columnDelimiter, String textEncapsulator,
 			String recordDelimiter) {
 
+		ColumnIDList.clear();
+
 		if (isFixedLength) {
 			setFixedLength();
 			fixedLength.fillList(exportDef_id, recordDelimiter);
@@ -293,6 +296,10 @@ public class Table {
 			BufferedWriter bufferedCsvoutput = null;
 			
 				try {
+					// if the name contains a file separator character change it (f.e Shipment/Receipt)
+					if (tableNameTranslation.contains("/"))
+						tableNameTranslation = tableNameTranslation.replaceAll("/", "-");
+
 					csvoutput = new FileWriter(p_PathDictionary
 							+ tableNameTranslation + ".csv");
 				} catch (IOException e1) {
@@ -320,6 +327,7 @@ public class Table {
 						}
 				} catch (SQLException e) {
 					log.log(Level.SEVERE, sql, e);
+					throw new AdempiereException(e.getMessage());
 				} finally {
 					try  {
 						bufferedCsvoutput.close();
