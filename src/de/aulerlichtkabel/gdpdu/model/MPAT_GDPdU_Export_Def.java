@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.Query;
+import org.compiere.util.Msg;
 
 public class MPAT_GDPdU_Export_Def extends X_PAT_GDPdU_Export_Def {
 
@@ -60,5 +61,15 @@ public class MPAT_GDPdU_Export_Def extends X_PAT_GDPdU_Export_Def {
 		return list.toArray(new MPAT_GDPdU_Export_TFields[list.size()]);
 	}
 
+	@Override
+	protected boolean beforeSave(boolean newRecord) {
+		if ((getDateFrom() != null && getDateTo() == null) || 
+				(getDateTo() != null && getDateFrom() == null)) {
+			log.saveError("FillMandatory", Msg.getElement(getCtx(), "DateFrom") + " - " + Msg.getElement(getCtx(), "DateTo"));
+			return false;
+		}
+		
+		return super.beforeSave(newRecord);
+	}
 
 }
