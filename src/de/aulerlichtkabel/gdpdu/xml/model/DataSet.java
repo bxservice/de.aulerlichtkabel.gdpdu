@@ -92,7 +92,7 @@ public class DataSet {
 		this.media = new Media();
 	}
 	
-	public void fillMedia(String p_PathDictionary){
+	public void fillMedia(String p_PathDictionary, int AD_Org_ID) {
 
 		MPAT_GDPdU pat_gdpdu = new MPAT_GDPdU(Env.getCtx(),pat_GDPdU_ID,null);
 		
@@ -129,7 +129,7 @@ public class DataSet {
 		media.setName(pat_gdpdu.getDescription()+mediaNo.toString());
 
 		try {
-			media.fillList(pat_GDPdU_ID,p_PathDictionary);
+			media.fillList(pat_GDPdU_ID, AD_Org_ID, p_PathDictionary);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

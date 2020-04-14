@@ -65,7 +65,7 @@ public class Media {
 		this.name = name;
 	}
 
-	public void fillList(int pat_GDPdU_ID, String p_PathDictionary) throws ZipException, IOException {
+	public void fillList(int pat_GDPdU_ID, int AD_Org_ID, String p_PathDictionary) throws ZipException, IOException {
 
 		MPAT_GDPdU pat_gdpdu = new MPAT_GDPdU(Env.getCtx(), pat_GDPdU_ID, null);
 		
@@ -142,7 +142,8 @@ public class Media {
 
 				table.writeCSVFile(false, tbl.getTableName(),
 						tableNameTranslation.toString(),
-						tableDef.getAD_Client_ID(), tableDef.getAD_Org_ID(),
+						tableDef.getAD_Client_ID(), 
+						AD_Org_ID,
 						p_PathDictionary);
 
 				}

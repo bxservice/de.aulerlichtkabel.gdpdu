@@ -53,6 +53,7 @@ public class GDPdU_Export extends SvrProcess {
 	/** Org Parameter */
 	private int p_AD_Org_ID = 0;
 	
+	@SuppressWarnings("unused")
 	private int p_AD_Client_ID = 0;
 	
 	private int p_PAT_GDPdU_ID = 0;
@@ -101,7 +102,7 @@ public class GDPdU_Export extends SvrProcess {
 		StringBuilder foldername = new StringBuilder();
 
 		if (!(foldername.append(createTempFolder(FOLDER)).equals("")))
-			dataset.fillMedia(foldername.toString());
+			dataset.fillMedia(foldername.toString(), p_AD_Org_ID);
 
 		try (OutputStream xmloutput = new FileOutputStream(new File(
 				foldername.toString() + "index.xml"))) {

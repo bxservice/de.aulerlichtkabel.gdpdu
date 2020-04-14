@@ -448,7 +448,7 @@ public class Table {
 			} else if (MTable.ACCESSLEVEL_Organization.equals(tableAccessLevel)) {
 				sql.append("AD_Client_ID = ")
 				.append(AD_Client_ID)
-				.append(" AND AD_Org_ID IN =")
+				.append(" AND AD_Org_ID =")
 				.append(AD_Org_ID);
 			} else if (MTable.ACCESSLEVEL_SystemOnly.equals(tableAccessLevel)) {
 				sql.append("AD_Client_ID = 0");
