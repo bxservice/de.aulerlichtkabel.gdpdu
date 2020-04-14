@@ -33,7 +33,7 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200331L;
+	private static final long serialVersionUID = 20200414L;
 
     /** Standard Constructor */
     public X_PAT_GDPdU_Export_Def (Properties ctx, int PAT_GDPdU_Export_Def_ID, String trxName)
@@ -463,30 +463,6 @@ public class X_PAT_GDPdU_Export_Def extends PO implements I_PAT_GDPdU_Export_Def
 	public String getURL () 
 	{
 		return (String)get_Value(COLUMNNAME_URL);
-	}
-
-	/** Set Current Client Only.
-		@param Use_AD_Client_ID 
-		Filter the information for the selected client
-	  */
-	public void setUse_AD_Client_ID (boolean Use_AD_Client_ID)
-	{
-		set_Value (COLUMNNAME_Use_AD_Client_ID, Boolean.valueOf(Use_AD_Client_ID));
-	}
-
-	/** Get Current Client Only.
-		@return Filter the information for the selected client
-	  */
-	public boolean isUse_AD_Client_ID () 
-	{
-		Object oo = get_Value(COLUMNNAME_Use_AD_Client_ID);
-		if (oo != null) 
-		{
-			 if (oo instanceof Boolean) 
-				 return ((Boolean)oo).booleanValue(); 
-			return "Y".equals(oo);
-		}
-		return false;
 	}
 
 	/** Set Search Key.

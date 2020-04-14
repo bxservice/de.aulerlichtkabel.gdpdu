@@ -142,7 +142,6 @@ public class Media {
 
 				table.writeCSVFile(false, tbl.getTableName(),
 						tableNameTranslation.toString(),
-						tableDef.isUse_AD_Client_ID(),
 						tableDef.getAD_Client_ID(), tableDef.getAD_Org_ID(),
 						p_PathDictionary);
 

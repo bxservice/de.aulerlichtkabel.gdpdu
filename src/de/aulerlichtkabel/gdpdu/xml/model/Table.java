@@ -301,7 +301,7 @@ public class Table {
 	}
 
 	public void writeCSVFile(boolean isFixedLength, String tableName,
-			String tableNameTranslation, boolean isUseclientid, int client_Id,
+			String tableNameTranslation, int client_Id,
 			int org_Id, String p_PathDictionary) {
 
 		if (!isFixedLength) {
@@ -328,7 +328,7 @@ public class Table {
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
 
-				String sql = sqlStatement(tableName, isUseclientid, client_Id, org_Id);
+				String sql = sqlStatement(tableName, client_Id, org_Id);
 				try {
 
 					pstmt = DB.prepareStatement(sql, null);
@@ -393,8 +393,7 @@ public class Table {
 	}
 
 	
-	private String sqlStatement(String tableName, boolean isUseclientid,
-			int client_Id, int org_Id) {
+	private String sqlStatement(String tableName, int AD_Client_ID, int AD_Org_ID) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -434,16 +433,25 @@ public class Table {
 				.append("'").append(getValidity().getRange().getTo()).append("'")
 				.append(" AND ");
 			}
-
-			if (isUseclientid) {
-				sql.append("ad_client_id=");
-				sql.append(client_Id);
-			}
-
-			if (org_Id != 0) {
-				sql.append(" and ");
-				sql.append("ad_org_id=");
-				sql.append(org_Id);
+			
+			// Client / Organization where clause
+			String tableAccessLevel = table.getAccessLevel();
+			
+			if (MTable.ACCESSLEVEL_All.equals(tableAccessLevel) 
+					|| MTable.ACCESSLEVEL_SystemPlusClient.equals(tableAccessLevel)) {
+				sql.append("AD_Client_ID IN (0,")
+				.append(AD_Client_ID).append(")");
+			} else if (MTable.ACCESSLEVEL_ClientOnly.equals(tableAccessLevel) ||
+					MTable.ACCESSLEVEL_ClientPlusOrganization.equals(tableAccessLevel)) {
+				sql.append("AD_Client_ID = ")
+				.append(AD_Client_ID);
+			} else if (MTable.ACCESSLEVEL_Organization.equals(tableAccessLevel)) {
+				sql.append("AD_Client_ID = ")
+				.append(AD_Client_ID)
+				.append(" AND AD_Org_ID IN =")
+				.append(AD_Org_ID);
+			} else if (MTable.ACCESSLEVEL_SystemOnly.equals(tableAccessLevel)) {
+				sql.append("AD_Client_ID = 0");
 			}
 
 			if (columnlist.contains("Posted")) {

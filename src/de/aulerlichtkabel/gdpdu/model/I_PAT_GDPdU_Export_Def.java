@@ -345,19 +345,6 @@ public interface I_PAT_GDPdU_Export_Def
 	  */
 	public String getURL();
 
-    /** Column name Use_AD_Client_ID */
-    public static final String COLUMNNAME_Use_AD_Client_ID = "Use_AD_Client_ID";
-
-	/** Set Current Client Only.
-	  * Filter the information for the selected client
-	  */
-	public void setUse_AD_Client_ID (boolean Use_AD_Client_ID);
-
-	/** Get Current Client Only.
-	  * Filter the information for the selected client
-	  */
-	public boolean isUse_AD_Client_ID();
-
     /** Column name Value */
     public static final String COLUMNNAME_Value = "Value";
 
