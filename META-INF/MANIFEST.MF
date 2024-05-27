@@ -16,7 +16,6 @@ Export-Package: de.aulerlichtkabel.gdpdu.component,
 Service-Component: OSGI-INF/modelfactory.xml, OSGI-INF/processfactory.xml
 Import-Package: com.sun.xml.bind;version="2.3.2",
  com.sun.xml.bind.marshaller;version="2.3.2",
- groovy.xml.jaxb;version="2.5.3",
  javax.xml.bind;version="2.3.0",
  javax.xml.bind.annotation;version="2.3.2"
-
+Automatic-Module-Name: de.aulerlichtkabel.gdpdu
