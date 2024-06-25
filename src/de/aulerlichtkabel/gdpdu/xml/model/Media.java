@@ -114,6 +114,8 @@ public class Media {
 						java.util.Date dateFrom = new java.util.Date(tableDef.getDateFrom().getTime());
 						table.getValidity().getRange()
 								.setFrom(dfFrom.format(dateFrom));					
+					} else {
+						table.getValidity().getRange().setFrom("");
 					}
 					DateFormat dfTo;
 					dfTo = DateFormat.getDateInstance(DateFormat.MEDIUM);
@@ -121,6 +123,8 @@ public class Media {
 						java.util.Date dateTo = new java.util.Date(tableDef.getDateTo().getTime());
 						table.getValidity().getRange()
 								.setTo(dfTo.format(dateTo));
+					} else {
+						table.getValidity().getRange().setTo("");
 					}
 
 					table.setDecimalSymbol(tableDef.getDecimalSymbol());
