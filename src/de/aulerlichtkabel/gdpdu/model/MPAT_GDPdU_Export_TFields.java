@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU General Public License along   *
  * with this plug-in; If not, see <http://www.gnu.org/licenses/>.            *
  ****************************************************************************/
- 
- /**
-  * @author Patric Maßing (Hans Auler GmbH)
-  * 2016
+
+/**
+ * @author Patric Maßing (Hans Auler GmbH)
+ * 2016
  */
 
 
@@ -26,6 +26,8 @@ package de.aulerlichtkabel.gdpdu.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
+
+import org.compiere.util.DB;
 
 public class MPAT_GDPdU_Export_TFields extends X_PAT_GDPdU_Export_TFields {
 
@@ -43,8 +45,18 @@ public class MPAT_GDPdU_Export_TFields extends X_PAT_GDPdU_Export_TFields {
 	public MPAT_GDPdU_Export_TFields(Properties ctx, ResultSet rs,
 			String trxName) {
 		super(ctx, rs, trxName);
-
 	}
-	
+
+	@Override
+	protected boolean beforeSave (boolean newRecord) {
+		if (getSequence() == 0) {
+			String sql = "SELECT COALESCE(MAX(Sequence),0)+10 FROM PAT_GDPdU_Export_TFields WHERE PAT_GDPdU_Export_Def_ID=?";
+			int ii = DB.getSQLValue (get_TrxName(), sql, getPAT_GDPdU_Export_Def_ID());
+			setSequence(ii);
+		}
+		
+		return true;
+	}
+
 
 }
