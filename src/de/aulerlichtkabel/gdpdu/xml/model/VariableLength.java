@@ -104,9 +104,8 @@ public class VariableLength {
 				columnName = fieldlist.getValue();
 				isValueChanged = true;
 			}
-			
 
-			if (MTable.getTableName(Env.getCtx(), fieldlist.getAD_Table_ID()).equals(column.getReferenceTableName())) {
+			if (column.isKey()) {
 
 				if (getTranslation(column.getAD_Column_ID()) == null) {
 
