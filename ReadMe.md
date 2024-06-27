@@ -8,7 +8,7 @@
 
 **Licence: GPLv2 **
 
-**Author: Patric Maﬂing (Hans Auler GmbH), Germany, pmassing(at)aulerlichtkabel.de **
+**Author: Patric Ma√üing (Hans Auler GmbH), Germany, pmassing(at)aulerlichtkabel.de **
 
 **Date: 2017 **
 
@@ -33,5 +33,5 @@ Plug-in to export data in GDPdU/GoBD format.
 
  Fixed length is prepared.
 
-
+**Documentation: https://wiki.idempiere.org/en/Plugin:_GoBD_Plugin**
 
