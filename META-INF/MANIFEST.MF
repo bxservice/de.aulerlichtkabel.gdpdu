@@ -3,9 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: GDPdU-Export
 Bundle-SymbolicName: de.aulerlichtkabel.gdpdu;singleton:=true
 Bundle-Version: 1.0.4.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: org.adempiere.base;bundle-version="7.1.0",
- org.adempiere.plugin.utils;bundle-version="7.1.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: org.adempiere.base;bundle-version="11.0.0",
+ org.adempiere.plugin.utils;bundle-version="11.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.adempiere.plugin.utils.Incremental2PackActivator
 Bundle-Vendor: Patric Maßing (Hans Auler GmbH)
